@@ -1,0 +1,126 @@
+@model List<WineRecommendationApp.Models.WineRecommendation>
+
+@{
+    ViewData["Title"] = "Рекомендації";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">🍷 Ваші персональні рекомендації</h1>
+    <p class="text-center text-muted mb-5">На основі ML аналізу ми підібрали для вас найкращі вина</p>
+
+    <div class="row">
+        @foreach (var wine in Model)
+        {
+            var qualityPercent = (int)(wine.PredictedQuality * 10);
+            
+            <div class="col-md-4 mb-4">
+                <div class="card wine-card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-bold">@wine.Name</h5>
+                            <span class="badge @(wine.Type == "Red" ? "bg-danger" : "bg-warning text-dark")">
+                                @wine.Type
+                            </span>
+                        </div>
+
+                        <div class="quality-section mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">ML Передбачена якість:</span>
+                                <span class="fw-bold text-primary">@wine.PredictedQuality.ToString("F2")/10</span>
+                            </div>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-success" 
+                                     role="progressbar" 
+                                     style="width: @qualityPercent%"
+                                     aria-valuenow="@wine.PredictedQuality" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="10">
+                                    @wine.PredictedQuality.ToString("F1")
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="card-text text-muted small">@wine.Description</p>
+
+                        <hr>
+
+                        <div class="wine-details">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <small class="text-muted">🍾 Алкоголь:</small>
+                                    <p class="mb-1 fw-bold">@wine.Alcohol.ToString("F1")%</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">🧪 pH:</small>
+                                    <p class="mb-1 fw-bold">@wine.PH.ToString("F2")</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">🍬 Цукор:</small>
+                                    <p class="mb-1 fw-bold">@wine.ResidualSugar.ToString("F1") г/л</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">💰 Ціна:</small>
+                                    <p class="mb-1 fw-bold">@wine.Price грн</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="match-score mt-3">
+                            <small class="text-muted">Відповідність вашим вподобанням:</small>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                    <div class="progress-bar bg-info" 
+                                         style="width: @wine.MatchScore%">
+                                    </div>
+                                </div>
+                                <span class="fw-bold">@wine.MatchScore%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-outline-primary btn-lg">
+            🔙 Нові вподобання
+        </a>
+    </div>
+</div>
+
+<style>
+    .wine-card {
+        border-radius: 15px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: 1px solid #e0e0e0;
+    }
+    .wine-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.3) !important;
+    }
+    .quality-section .progress {
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+    .progress-bar {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: width 0.6s ease;
+        font-size: 14px;
+    }
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+    .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 0;
+    }
+    .wine-details p {
+        margin-bottom: 0.25rem;
+    }
+</style>
